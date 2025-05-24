@@ -1,0 +1,39 @@
+# Core dependencies
+torch>=2.0.0
+torchvision>=0.15.0
+torchaudio>=2.0.0
+
+# AI/ML Libraries
+openai-whisper>=20231117
+transformers[sentencepiece]>=4.35.0
+coqui-tts>=0.17.0
+scipy>=1.11.0
+numpy>=1.24.0
+librosa>=0.10.0
+soundfile>=0.12.0
+
+# Image/Video Processing
+pillow>=10.0.0
+opencv-python>=4.8.0
+imageio>=2.31.0
+imageio-ffmpeg>=0.4.9
+
+# Web Framework
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+
+# Utilities
+python-dotenv>=1.0.0
+pydantic>=2.4.0
+requests>=2.31.0
+aiofiles>=23.2.0
+
+# Development
+pytest>=7.4.0
+black>=23.9.0
+isort>=5.12.0
+
+# Optional QR/Barcode (if needed)
+pyzbar>=0.1.9
+qrcode>=7.4.2
