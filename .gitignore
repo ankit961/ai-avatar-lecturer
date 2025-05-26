@@ -205,3 +205,8 @@ SadTalker_*/
 # Log files
 *.log
 *.txt.gz
+
+# Ignore all Ankit files
+*Ankit*
+*ankit*
+
