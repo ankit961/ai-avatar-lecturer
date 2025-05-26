@@ -206,7 +206,18 @@ SadTalker_*/
 *.log
 *.txt.gz
 
-# Ignore all Ankit files
+# Ignore all files and folders with 'Ankit' or 'ankit' in the name anywhere
 *Ankit*
 *ankit*
+*test_Ankit*
+
+# Ignore specific portrait and voice files
+backend/portraits/ankit_form_test_voice.wav
+backend/portraits/ankit_form_test.png
+backend/portraits/ankit_voice.wav
+backend/portraits/ankit.png
+backend/portraits/Gujarati_voice.wav
+backend/portraits/Gujarati.png
+backend/portraits/shree_voice.wav
+backend/portraits/shree.png
 
