@@ -48,6 +48,88 @@
             padding: 40px;
         }
         
+        /* Task Logs Modal */
+        .logs-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        .logs-content {
+            background: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        .close-logs {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #888;
+        }
+        
+        .close-logs:hover {
+            color: #333;
+        }
+        
+        .logs-title {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .log-container {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .log-entry {
+            margin-bottom: 8px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        
+        .log-timestamp {
+            color: #888;
+            margin-right: 10px;
+        }
+        
+        .log-level-INFO {
+            color: #0066cc;
+        }
+        
+        .log-level-WARNING {
+            color: #ff9900;
+        }
+        
+        .log-level-ERROR {
+            color: #cc0000;
+        }
+        
         .tabs {
             display: flex;
             margin-bottom: 30px;
@@ -176,42 +258,190 @@
             transition: width 0.3s ease;
         }
         
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
+        /* Task List Styles */
+        .task-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
         }
         
-        .feature-card {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
+        .task-item {
+            background: white;
+            margin: 8px;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
         }
         
-        .feature-card h3 {
-            color: #2196F3;
+        .task-item:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transform: translateY(-1px);
+        }
+        
+        .task-item.status-completed {
+            border-left-color: #4CAF50;
+        }
+        
+        .task-item.status-failed {
+            border-left-color: #f44336;
+        }
+        
+        .task-item.status-processing {
+            border-left-color: #ff9800;
+        }
+        
+        .task-item.status-pending {
+            border-left-color: #2196F3;
+        }
+        
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         
-        .api-status {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 20px;
+        .task-id {
+            font-family: 'Courier New', monospace;
+            background: #e3f2fd;
+            padding: 4px 8px;
+            border-radius: 4px;
             font-size: 12px;
             font-weight: bold;
         }
         
-        .api-status.online {
-            background: #4CAF50;
+        .task-type {
+            background: #f5f5f5;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #666;
+        }
+        
+        .task-status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
             color: white;
         }
         
-        .api-status.offline {
-            background: #f44336;
-            color: white;
+        .status-completed .task-status {
+            background: #4CAF50;
         }
+        
+        .status-failed .task-status {
+            background: #f44336;
+        }
+        
+        .status-processing .task-status {
+            background: #ff9800;
+        }
+        
+        .status-pending .task-status {
+            background: #2196F3;
+        }
+        
+        .task-details {
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        
+        .task-progress {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        
+        .progress-bar-mini {
+            flex: 1;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill-mini {
+            height: 100%;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            transition: width 0.3s ease;
+        }
+        
+        .task-time {
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        
+        .task-message {
+            color: #333;
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+        
+        .task-metadata {
+            margin: 8px 0;
+        }
+        
+        .meta-tag {
+            display: inline-block;
+            background: #e1f5fe;
+            color: #0277bd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            margin-right: 5px;
+        }
+        
+        .task-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            align-items: center;
+        }
+        
+        .btn-mini {
+            padding: 4px 8px;
+            font-size: 12px;
+            border: none;
+            border-radius: 4px;
+            background: #e0e0e0;
+            color: #333;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        
+        .btn-mini:hover {
+            background: #d0d0d0;
+        }
+        
+        .logs-btn {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .logs-btn:hover {
+            background: #c8e6c9;
+        }
+        
+        .task-error {
+            color: #f44336;
+            font-size: 12px;
+            margin-left: auto;
+        }
+        
+        /* Form Styles */
     </style>
 </head>
 <body>
@@ -249,6 +479,8 @@
             <div class="tabs">
                 <button class="tab active" onclick="switchTab('text')">📝 Text to Video</button>
                 <button class="tab" onclick="switchTab('audio')">🎤 Audio to Video</button>
+                <button class="tab" onclick="switchTab('custom')">🖼️ Custom Image Video</button>
+                <button class="tab" onclick="switchTab('imageaudio')">🎬 Image + Audio Direct</button>
                 <button class="tab" onclick="switchTab('status')">📊 Task Status</button>
             </div>
             
@@ -264,6 +496,7 @@
                     <div class="form-group">
                         <label for="textLanguage">Language:</label>
                         <select id="textLanguage">
+                            <option value="auto">Auto-detect</option>
                             <option value="en">English</option>
                             <option value="hi">Hindi</option>
                             <option value="ta">Tamil</option>
@@ -280,8 +513,28 @@
                     
                     <div class="form-group">
                         <label for="lecturerName">Lecturer Name:</label>
-                        <input type="text" id="lecturerName" placeholder="e.g., prof_smith" required>
-                        <small>Make sure the lecturer portrait and voice files exist in the portraits folder</small>
+                        <input type="text" id="lecturerName" placeholder="e.g., prof_smith" value="sample_lecturer">
+                        <small>Default lecturer or enter custom name</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="textPortraitImage">Custom Portrait Image (Optional):</label>
+                        <div class="upload-area" onclick="document.getElementById('textPortraitImage').click()">
+                            <p>📷 Click to upload portrait image (JPG, PNG)</p>
+                            <p class="upload-note">Or use default lecturer portrait</p>
+                        </div>
+                        <input type="file" id="textPortraitImage" accept=".jpg,.jpeg,.png" style="display: none;">
+                        <div id="textPortraitPreview" class="file-preview"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="textVoiceClone">Custom Voice Reference (Optional):</label>
+                        <div class="upload-area" onclick="document.getElementById('textVoiceClone').click()">
+                            <p>🎤 Click to upload voice sample for cloning (WAV, MP3)</p>
+                            <p class="upload-note">5-10 seconds recommended for best results</p>
+                        </div>
+                        <input type="file" id="textVoiceClone" accept=".wav,.mp3,.m4a,.flac" style="display: none;">
+                        <div id="textVoicePreview" class="file-preview"></div>
                     </div>
                     
                     <div class="form-group">
@@ -346,7 +599,27 @@
                     
                     <div class="form-group">
                         <label for="audioLecturerName">Lecturer Name:</label>
-                        <input type="text" id="audioLecturerName" placeholder="e.g., prof_smith" required>
+                        <input type="text" id="audioLecturerName" placeholder="e.g., prof_smith" value="sample_lecturer">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="audioPortraitImage">Custom Portrait Image (Optional):</label>
+                        <div class="upload-area" onclick="document.getElementById('audioPortraitImage').click()">
+                            <p>📷 Click to upload portrait image (JPG, PNG)</p>
+                            <p class="upload-note">Or use default lecturer portrait</p>
+                        </div>
+                        <input type="file" id="audioPortraitImage" accept=".jpg,.jpeg,.png" style="display: none;">
+                        <div id="audioPortraitPreview" class="file-preview"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="audioVoiceClone">Voice Clone from Upload (Optional):</label>
+                        <div class="upload-area" onclick="document.getElementById('audioVoiceClone').click()">
+                            <p>🎤 Upload a voice sample to clone for video generation</p>
+                            <p class="upload-note">Use this to clone a specific voice instead of the uploaded audio content</p>
+                        </div>
+                        <input type="file" id="audioVoiceClone" accept=".wav,.mp3,.m4a,.flac" style="display: none;">
+                        <div id="audioVoicePreview" class="file-preview"></div>
                     </div>
                     
                     <div class="form-group">
@@ -359,10 +632,155 @@
                 </form>
             </div>
             
+            <!-- Custom Image Video Tab -->
+            <div id="customTab" class="tab-content">
+                <h2>Generate Video with Custom Image</h2>
+                <p style="margin-bottom: 20px; color: #666;">Upload your own image to create a personalized avatar video. Optionally provide a voice reference for better voice cloning.</p>
+                
+                <form id="customForm">
+                    <div class="form-group">
+                        <label for="customTextInput">Text to Synthesize:</label>
+                        <textarea id="customTextInput" placeholder="Enter the text you want the avatar to speak..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Upload Portrait Image: *</label>
+                        <div class="file-upload" id="imageUpload">
+                            <input type="file" id="imageFile" accept=".jpg,.jpeg,.png" style="display: none;">
+                            <div>
+                                <p>🖼️ Click to upload or drag & drop image file</p>
+                                <small>Supported formats: JPG, PNG (Max 50MB) - Best results with front-facing portraits</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Upload Voice Reference (Optional):</label>
+                        <div class="file-upload" id="voiceUpload">
+                            <input type="file" id="voiceFile" accept=".wav,.mp3,.m4a,.flac" style="display: none;">
+                            <div>
+                                <p>🎤 Click to upload or drag & drop voice sample</p>
+                                <small>Optional: Provide a voice sample for better voice cloning (5-10 seconds recommended)</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customSourceLang">Source Language:</label>
+                        <select id="customSourceLang">
+                            <option value="en">English</option>
+                            <option value="hi">Hindi</option>
+                            <option value="ta">Tamil</option>
+                            <option value="te">Telugu</option>
+                            <option value="mr">Marathi</option>
+                            <option value="bn">Bengali</option>
+                            <option value="gu">Gujarati</option>
+                            <option value="kn">Kannada</option>
+                            <option value="ml">Malayalam</option>
+                            <option value="pa">Punjabi</option>
+                            <option value="ur">Urdu</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customTargetLang">Target Language:</label>
+                        <select id="customTargetLang">
+                            <option value="gu">Gujarati</option>
+                            <option value="hi">Hindi</option>
+                            <option value="en">English</option>
+                            <option value="ta">Tamil</option>
+                            <option value="te">Telugu</option>
+                            <option value="mr">Marathi</option>
+                            <option value="bn">Bengali</option>
+                            <option value="kn">Kannada</option>
+                            <option value="ml">Malayalam</option>
+                            <option value="pa">Punjabi</option>
+                            <option value="ur">Urdu</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="customSpeed">Speech Speed:</label>
+                        <input type="range" id="customSpeed" min="0.5" max="2.0" step="0.1" value="1.0">
+                        <span id="customSpeedValue">1.0x</span>
+                    </div>
+                    
+                    <button type="submit" class="btn">🎬 Generate Custom Video</button>
+                </form>
+            </div>
+            
+            <!-- Image + Audio Direct Tab -->
+            <div id="imageaudioTab" class="tab-content">
+                <h2>Direct Image + Audio Video</h2>
+                <p style="margin-bottom: 20px; color: #666;">Upload an image and audio file to create a talking avatar video directly, without any text-to-speech processing. Perfect for when you already have the exact audio you want to use.</p>
+                
+                <form id="imageAudioForm">
+                    <div class="form-group">
+                        <label>Upload Portrait Image: *</label>
+                        <div class="file-upload" id="imageAudioImageUpload">
+                            <input type="file" id="imageAudioImageFile" accept=".jpg,.jpeg,.png" style="display: none;">
+                            <div>
+                                <p>🖼️ Click to upload or drag & drop image file</p>
+                                <small>Supported formats: JPG, PNG (Max 50MB) - Best results with front-facing portraits</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Upload Audio File: *</label>
+                        <div class="file-upload" id="imageAudioAudioUpload">
+                            <input type="file" id="imageAudioAudioFile" accept=".wav,.mp3,.m4a,.flac" style="display: none;">
+                            <div>
+                                <p>🎤 Click to upload or drag & drop audio file</p>
+                                <small>Supported formats: WAV, MP3, M4A, FLAC (Max 50MB) - This audio will be used directly for lip-sync</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="imageAudioLecturerName">Output Name:</label>
+                        <input type="text" id="imageAudioLecturerName" placeholder="e.g., my_avatar_video" value="custom_image_audio">
+                        <small>This will be used as the filename prefix for the generated video</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="imageAudioEnhanceFace" checked>
+                            Enhance Face Quality
+                        </label>
+                        <small>Apply face enhancement for better video quality (recommended)</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="imageAudioStillMode" checked>
+                            Still Mode
+                        </label>
+                        <small>Generate lip movements only (no head motion) - faster processing</small>
+                    </div>
+                    
+                    <button type="submit" class="btn">🎬 Generate Direct Video</button>
+                </form>
+            </div>
+            
             <!-- Status Tab -->
             <div id="statusTab" class="tab-content">
-                <h2>Task Status</h2>
+                <h2>📊 Task Status & Management</h2>
+                
+                <!-- All Tasks Overview -->
                 <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3>All Tasks</h3>
+                        <button type="button" class="btn" onclick="refreshAllTasks()" style="padding: 8px 16px; font-size: 14px;">🔄 Refresh</button>
+                    </div>
+                    <div id="allTasksDisplay">
+                        <p>Loading tasks...</p>
+                    </div>
+                </div>
+                
+                <!-- Individual Task Lookup -->
+                <div class="form-group" style="margin-top: 30px;">
+                    <h3>Check Specific Task</h3>
                     <label for="taskId">Task ID:</label>
                     <input type="text" id="taskId" placeholder="Enter task ID to check status">
                     <button type="button" class="btn" onclick="checkStatus()">Check Status</button>
@@ -384,10 +802,21 @@
                 </div>
             </div>
         </div>
-    </div>
-
-    <script>
-        const API_BASE = 'http://localhost:8001';
+        
+        <!-- Logs Modal -->
+        <div id="logsModal" class="logs-modal">
+            <div class="logs-content">
+                <span class="close-logs" onclick="closeTaskLogs()">&times;</span>
+                <h3 class="logs-title">Task Logs: <span id="logsTaskId"></span></h3>
+                <div id="logsContainer" class="log-container">
+                    <p>Loading logs...</p>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+        // Config
+        const API_BASE = 'http://localhost:9000';
         
         // Load supported languages from API
         async function loadSupportedLanguages() {
@@ -405,7 +834,7 @@
         
         // Update language select elements
         function updateLanguageSelects(languages) {
-            const selects = ['textLanguage', 'sourceLanguage', 'targetLanguage'];
+            const selects = ['textLanguage', 'sourceLanguage', 'targetLanguage', 'customSourceLang', 'customTargetLang'];
             
             selects.forEach(selectId => {
                 const select = document.getElementById(selectId);
@@ -480,6 +909,89 @@
             }
         });
         
+        // Custom image upload handling
+        document.getElementById('imageUpload').addEventListener('click', () => {
+            document.getElementById('imageFile').click();
+        });
+        
+        document.getElementById('imageFile').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                document.querySelector('#imageUpload p').textContent = `🖼️ ${file.name}`;
+            }
+        });
+        
+        // Custom voice upload handling
+        document.getElementById('voiceUpload').addEventListener('click', () => {
+            document.getElementById('voiceFile').click();
+        });
+        
+        document.getElementById('voiceFile').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                document.querySelector('#voiceUpload p').textContent = `🎤 ${file.name}`;
+            }
+        });
+
+        // Image + Audio Direct upload handling
+        document.getElementById('imageAudioImageUpload').addEventListener('click', () => {
+            document.getElementById('imageAudioImageFile').click();
+        });
+        
+        document.getElementById('imageAudioImageFile').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                document.querySelector('#imageAudioImageUpload p').textContent = `🖼️ ${file.name}`;
+            }
+        });
+        
+        document.getElementById('imageAudioAudioUpload').addEventListener('click', () => {
+            document.getElementById('imageAudioAudioFile').click();
+        });
+        
+        document.getElementById('imageAudioAudioFile').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                document.querySelector('#imageAudioAudioUpload p').textContent = `🎤 ${file.name}`;
+            }
+        });
+
+        // Text tab portrait image upload handling
+        document.getElementById('textPortraitImage').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const preview = document.getElementById('textPortraitPreview');
+                preview.innerHTML = `<p>📷 Selected: ${file.name}</p>`;
+            }
+        });
+
+        // Text tab voice clone upload handling
+        document.getElementById('textVoiceClone').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const preview = document.getElementById('textVoicePreview');
+                preview.innerHTML = `<p>🎤 Selected: ${file.name}</p>`;
+            }
+        });
+
+        // Audio tab portrait image upload handling
+        document.getElementById('audioPortraitImage').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const preview = document.getElementById('audioPortraitPreview');
+                preview.innerHTML = `<p>📷 Selected: ${file.name}</p>`;
+            }
+        });
+
+        // Audio tab voice clone upload handling
+        document.getElementById('audioVoiceClone').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const preview = document.getElementById('audioVoicePreview');
+                preview.innerHTML = `<p>🎤 Voice clone sample: ${file.name}</p>`;
+            }
+        });
+        
         // Speed sliders
         document.getElementById('textSpeed').addEventListener('input', (e) => {
             document.getElementById('speedValue').textContent = e.target.value + 'x';
@@ -489,16 +1001,19 @@
             document.getElementById('audioSpeedValue').textContent = e.target.value + 'x';
         });
         
+        document.getElementById('customSpeed').addEventListener('input', (e) => {
+            document.getElementById('customSpeedValue').textContent = e.target.value + 'x';
+        });
+        
         // Text form submission
         document.getElementById('textForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const formData = {
-                text: document.getElementById('textInput').value,
-                language: document.getElementById('textLanguage').value,
-                lecturer_name: document.getElementById('lecturerName').value,
-                speed: parseFloat(document.getElementById('textSpeed').value)
-            };
+            const formData = new FormData();
+            formData.append('text', document.getElementById('textInput').value);
+            formData.append('language', document.getElementById('textLanguage').value);
+            formData.append('lecturer_name', document.getElementById('lecturerName').value);
+            formData.append('speed', document.getElementById('textSpeed').value);
             
             try {
                 showStatusPanel();
@@ -506,10 +1021,7 @@
                 
                 const response = await fetch(`${API_BASE}/generate/text`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
+                    body: formData
                 });
                 
                 const result = await response.json();
@@ -527,6 +1039,8 @@
             
             const formData = new FormData();
             const audioFile = document.getElementById('audioFile').files[0];
+            const portraitFile = document.getElementById('audioPortraitImage').files[0];
+            const voiceCloneFile = document.getElementById('audioVoiceClone').files[0];
             
             if (!audioFile) {
                 alert('Please select an audio file');
@@ -538,6 +1052,14 @@
             formData.append('translate_to', document.getElementById('targetLanguage').value);
             formData.append('lecturer_name', document.getElementById('audioLecturerName').value);
             formData.append('speed', document.getElementById('audioSpeed').value);
+            
+            // Add optional files
+            if (portraitFile) {
+                formData.append('portrait_file', portraitFile);
+            }
+            if (voiceCloneFile) {
+                formData.append('voice_clone_file', voiceCloneFile);
+            }
             
             try {
                 showStatusPanel();
@@ -555,6 +1077,218 @@
             } catch (error) {
                 updateStatus('Error: ' + error.message, 0);
             }
+        });
+        
+        // Custom image form submission
+        document.getElementById('customForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            const imageFile = document.getElementById('imageFile').files[0];
+            const voiceFile = document.getElementById('voiceFile').files[0];
+            
+            if (!imageFile) {
+                alert('Please select an image file');
+                return;
+            }
+            
+            formData.append('text', document.getElementById('customTextInput').value);
+            formData.append('image_file', imageFile);
+            formData.append('language', document.getElementById('customSourceLang').value);
+            formData.append('translate_to', document.getElementById('customTargetLang').value);
+            formData.append('speed', document.getElementById('customSpeed').value);
+            
+            if (voiceFile) {
+                formData.append('voice_file', voiceFile);
+            }
+            
+            try {
+                showStatusPanel();
+                updateStatus('Starting custom image video generation...', 0);
+                
+                const response = await fetch(`${API_BASE}/generate/video-with-image`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                if (result.task_id) {
+                    pollTaskStatus(result.task_id);
+                }
+            } catch (error) {
+                updateStatus('Error: ' + error.message, 0);
+            }
+        });
+        
+        // Image + Audio Direct form submission
+        document.getElementById('imageAudioForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            const imageFile = document.getElementById('imageAudioImageFile').files[0];
+            const audioFile = document.getElementById('imageAudioAudioFile').files[0];
+            
+            if (!imageFile) {
+                alert('Please select an image file');
+                return;
+            }
+            
+            if (!audioFile) {
+                alert('Please select an audio file');
+                return;
+            }
+            
+            formData.append('image_file', imageFile);
+            formData.append('audio_file', audioFile);
+            formData.append('lecturer_name', document.getElementById('imageAudioLecturerName').value);
+            formData.append('enhance_face', document.getElementById('imageAudioEnhanceFace').checked);
+            formData.append('still_mode', document.getElementById('imageAudioStillMode').checked);
+            
+            try {
+                showStatusPanel();
+                updateStatus('Starting direct image + audio video generation...', 0);
+                
+                const response = await fetch(`${API_BASE}/generate/image-with-audio`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                if (result.task_id) {
+                    pollTaskStatus(result.task_id);
+                }
+            } catch (error) {
+                updateStatus('Error: ' + error.message, 0);
+            }
+        });
+        
+        // All tasks management
+        async function refreshAllTasks() {
+            const allTasksDisplay = document.getElementById('allTasksDisplay');
+            allTasksDisplay.innerHTML = '<p>Loading tasks...</p>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/tasks`);
+                const tasks = await response.json();
+                
+                if (tasks.length === 0) {
+                    allTasksDisplay.innerHTML = '<p>No tasks found.</p>';
+                    return;
+                }
+                
+                allTasksDisplay.innerHTML = formatTaskList(tasks);
+            } catch (error) {
+                allTasksDisplay.innerHTML = `<p style="color: red;">Error loading tasks: ${error.message}</p>`;
+            }
+        }
+        
+        function formatTaskList(tasks) {
+            let html = '<div class="task-list">';
+            
+            tasks.tasks.forEach(task => {
+                const statusClass = getStatusClass(task.status);
+                const createdAt = new Date(task.created_at).toLocaleString();
+                const typeDisplay = task.task_type ? task.task_type.replace('_', ' ').toUpperCase() : 'UNKNOWN';
+                
+                html += `
+                    <div class="task-item ${statusClass}">
+                        <div class="task-header">
+                            <span class="task-id">${task.task_id}</span>
+                            <span class="task-type">${typeDisplay}</span>
+                            <span class="task-status">${task.status.toUpperCase()}</span>
+                        </div>
+                        <div class="task-details">
+                            <div class="task-progress">
+                                <div class="progress-bar-mini">
+                                    <div class="progress-fill-mini" style="width: ${task.progress}%"></div>
+                                </div>
+                                <span>${task.progress}%</span>
+                            </div>
+                            <div class="task-time">Created: ${createdAt}</div>
+                            ${task.message ? `<div class="task-message">${task.message}</div>` : ''}
+                        </div>
+                        <div class="task-actions">
+                            ${task.result_url ? `<a href="${API_BASE}${task.result_url}" class="btn-mini">📥 Download</a>` : ''}
+                            <button class="btn-mini" onclick="showTaskDetails('${task.task_id}')">👁️ Details</button>
+                            <button class="btn-mini logs-btn" onclick="showTaskLogs('${task.task_id}')">📋 Logs</button>
+                            ${task.error ? `<span class="task-error">❌ ${task.error}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            return html;
+        }
+        
+        function getStatusClass(status) {
+            switch (status.toLowerCase()) {
+                case 'completed':
+                    return 'status-completed';
+                case 'processing':
+                    return 'status-processing';
+                case 'failed':
+                    return 'status-failed';
+                default:
+                    return 'status-pending';
+            }
+        }
+        
+        // Task logs handling
+        async function showTaskLogs(taskId) {
+            const logsModal = document.getElementById('logsModal');
+            const logsTaskId = document.getElementById('logsTaskId');
+            const logsContainer = document.getElementById('logsContainer');
+            
+            logsTaskId.textContent = taskId;
+            logsContainer.innerHTML = '<p>Loading logs...</p>';
+            
+            // Show the modal
+            logsModal.style.display = 'block';
+            
+            // Fetch and display logs
+            try {
+                const response = await fetch(`${API_BASE}/task_logs/${taskId}`);
+                const data = await response.json();
+                
+                if (!data.logs || data.logs.length === 0) {
+                    logsContainer.innerHTML = '<p>No logs available for this task.</p>';
+                    return;
+                }
+                
+                // Format and display logs
+                let logsHtml = '';
+                data.logs.forEach(log => {
+                    logsHtml += `
+                        <div class="log-entry">
+                            <span class="log-timestamp">[${log.timestamp}]</span>
+                            <span class="log-level-${log.level}">${log.level}:</span>
+                            ${log.message}
+                        </div>
+                    `;
+                });
+                
+                logsContainer.innerHTML = logsHtml;
+            } catch (error) {
+                logsContainer.innerHTML = `<p style="color: red;">Error loading logs: ${error.message}</p>`;
+            }
+        }
+        
+        function closeTaskLogs() {
+            const logsModal = document.getElementById('logsModal');
+            logsModal.style.display = 'none';
+        }
+        
+        function showTaskDetails(taskId) {
+            document.getElementById('taskId').value = taskId;
+            checkStatus();
+        }
+        
+        // Initialize task list on load
+        window.addEventListener('load', () => {
+            refreshAllTasks();
+            // Auto refresh tasks every 30 seconds
+            setInterval(refreshAllTasks, 30000);
         });
         
         // Status checking
@@ -623,9 +1357,62 @@
             document.getElementById('downloadLink').href = url;
         }
         
+        // Task logs dialog
+        function showTaskLogs(taskId) {
+            // Fetch and display task logs
+            fetch(`${API_BASE}/logs/${taskId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const logsContent = document.getElementById('logsContent');
+                    logsContent.innerHTML = ''; // Clear previous logs
+                    
+                    if (data.logs && data.logs.length > 0) {
+                        data.logs.forEach(log => {
+                            const logEntry = document.createElement('div');
+                            logEntry.className = 'log-entry';
+                            logEntry.innerHTML = `
+                                <span class="log-timestamp">${new Date(log.timestamp).toLocaleTimeString()}</span>
+                                <span class="log-level-${log.level}">${log.level}</span>: ${log.message}
+                            `;
+                            logsContent.appendChild(logEntry);
+                        });
+                    } else {
+                        logsContent.innerHTML = '<p>No logs found for this task.</p>';
+                    }
+                    
+                    // Show logs modal
+                    document.getElementById('logsModal').style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error fetching logs:', error);
+                });
+        }
+        
+        // Close logs dialog
+        function closeLogs() {
+            document.getElementById('logsModal').style.display = 'none';
+        }
+        
         // Initialize
         checkApiStatus();
         setInterval(checkApiStatus, 30000); // Check every 30 seconds
+        
+        // Initialize task list
+        refreshAllTasks();
+        
+        // Auto-refresh task list every 10 seconds
+        setInterval(refreshAllTasks, 10000);
     </script>
+    
+    <!-- Task Logs Modal -->
+    <div id="logsModal" class="logs-modal">
+        <div class="logs-content">
+            <span class="close-logs" onclick="closeTaskLogs()">&times;</span>
+            <h3 class="logs-title">Task Logs: <span id="logsTaskId"></span></h3>
+            <div id="logsContainer" class="log-container">
+                <p>Loading logs...</p>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

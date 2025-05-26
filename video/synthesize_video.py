@@ -194,6 +194,11 @@ class SadTalkerWrapper:
         logger.info(f"Generating video: {portrait_path} + {audio_path} -> {output_path}")
         
         try:
+            # Convert to absolute paths
+            portrait_path = portrait_path.resolve()
+            audio_path = audio_path.resolve()
+            output_path = output_path.resolve()
+            
             # Build SadTalker command
             cmd = [
                 "python3", str(self.sadtalker_path / "inference.py"),

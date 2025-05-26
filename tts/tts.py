@@ -57,6 +57,31 @@ class TTSGenerator:
             logger.error(f"Failed to load TTS model: {e}")
             raise
     
+    def get_supported_languages(self) -> List[str]:
+        """
+        Get list of supported languages.
+        
+        Returns:
+            List of supported language codes
+        """
+        try:
+            # For XTTS model, languages are available in the config
+            if hasattr(self.tts, 'synthesizer') and hasattr(self.tts.synthesizer, 'tts_model'):
+                if hasattr(self.tts.synthesizer.tts_model, 'language_manager'):
+                    return list(self.tts.synthesizer.tts_model.language_manager.language_names)
+                elif hasattr(self.tts.synthesizer.tts_model, 'config'):
+                    config = self.tts.synthesizer.tts_model.config
+                    if hasattr(config, 'languages'):
+                        return config.languages
+            
+            # Fallback to known XTTS v2 supported languages
+            return ['en', 'es', 'fr', 'de', 'it', 'pt', 'pl', 'tr', 'ru', 'nl', 'cs', 'ar', 'zh-cn', 'hu', 'ko', 'ja', 'hi']
+            
+        except Exception as e:
+            logger.warning(f"Could not get supported languages: {e}")
+            # Return fallback list
+            return ['en', 'es', 'fr', 'de', 'it', 'pt', 'pl', 'tr', 'ru', 'nl', 'cs', 'ar', 'zh-cn', 'hu', 'ko', 'ja', 'hi']
+    
     def synthesize_speech(
         self, 
         text: str,

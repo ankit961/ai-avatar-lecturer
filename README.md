@@ -1,18 +1,35 @@
 # AI Avatar Lecture 🎭📚
 
-An AI-powered video synthesis system that creates realistic talking avatars for educational lectures from text input, supporting multiple languages with voice cloning and lip-sync technology.
+An AI-powered video synthesis system that creates realistic talking avatars for educational lectures. Supports multiple input modes including text, audio files, and direct image+audio combinations with advanced lip-sync technology and multi-language support.
 
-## 🌟 Features
+## 🌟 Key Features
 
-- **Text-to-Speech (TTS)**: Convert text to natural speech using advanced TTS models
-- **Voice Cloning**: Clone specific lecturer voices for personalized avatars
-- **Multi-language Support**: Support for multiple languages via translation
-- **Automatic Speech Recognition (ASR)**: Process audio inputs for voice cloning
-- **Realistic Lip Sync**: Generate talking head videos with accurate lip synchronization using SadTalker
-- **Face Enhancement**: Optional face enhancement for higher quality output
-- **Web Interface**: User-friendly web interface for easy interaction
-- **REST API**: Complete FastAPI backend for programmatic access
-- **Multiple Input Modes**: Support text input, audio upload, and custom lecturer profiles
+### 🎬 Video Generation Modes
+- **Text-to-Video**: Convert text to talking avatar videos with TTS
+- **Audio-to-Video**: Process uploaded audio files to create talking avatars
+- **Custom Image Video**: Use your own portrait images with text input
+- **Image + Audio Direct**: Direct video generation from image and audio files (no TTS processing)
+
+### 🎙️ Audio & Speech Processing
+- **Advanced TTS**: Multiple TTS engines including Coqui TTS and GTTS
+- **Voice Cloning**: Clone specific lecturer voices using Coqui TTS embeddings
+- **Multi-language Support**: Support for 10+ languages including English, Hindi, Tamil, Gujarati, etc.
+- **Automatic Speech Recognition (ASR)**: Process audio inputs using OpenAI Whisper
+- **Language Translation**: Automatic translation between supported languages
+
+### 🎭 Video Synthesis & Enhancement
+- **SadTalker Integration**: State-of-the-art lip-sync technology for realistic talking heads
+- **Face Enhancement**: Optional GFPGAN face enhancement for higher quality output
+- **Still Mode**: Generate lip movements only (no head motion) for faster processing
+- **Multiple Resolutions**: Support for 256px and 512px video output
+- **Batch Processing**: Efficient processing of multiple frames
+
+### 🌐 User Interface & API
+- **Modern Web Interface**: Beautiful, responsive web UI with real-time status updates
+- **REST API**: Complete FastAPI backend with background task processing
+- **Task Management**: Monitor generation progress with unique task IDs
+- **File Management**: Automatic cleanup and organized output structure
+- **CORS Support**: Cross-origin resource sharing for frontend integration
 
 ## 🏗️ Architecture
 
@@ -20,6 +37,7 @@ An AI-powered video synthesis system that creates realistic talking avatars for 
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Web Interface │    │   FastAPI       │    │   AI Models     │
 │   (Frontend)    │◄──►│   Backend       │◄──►│   (Processing)  │
+│     Port :5001  │    │   Port: 5001    │    │   SadTalker     │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
                               │
                               ▼
@@ -28,12 +46,20 @@ An AI-powered video synthesis system that creates realistic talking avatars for 
                     │   (Outputs)     │
                     └─────────────────┘
 
+Processing Pipeline:
+┌─────────┐  ┌──────────────┐  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐
+│  Input  │─►│ ASR/Language │─►│ Voice Clone │─►│ TTS/Audio    │─►│ Video Sync  │
+│ (Text/  │  │ Detection &  │  │ & Speaker   │  │ Generation   │  │ SadTalker   │
+│ Audio)  │  │ Translation  │  │ Embedding   │  │ (Coqui/GTTS) │  │ + GFPGAN    │
+└─────────┘  └──────────────┘  └─────────────┘  └──────────────┘  └─────────────┘
+
 Components:
-├── ASR (Automatic Speech Recognition)
-├── Translation (Multi-language support)
-├── Voice Cloning (Speaker adaptation)
-├── TTS (Text-to-Speech)
-└── Video Synthesis (SadTalker integration)
+├── ASR (OpenAI Whisper) - Speech-to-text processing
+├── Translation (Multi-language support) - Text translation between languages  
+├── Voice Cloning (Coqui TTS) - Speaker voice adaptation and embedding
+├── TTS (Enhanced TTS) - High-quality text-to-speech generation
+├── Video Synthesis (SadTalker) - Lip-sync and talking head generation
+└── Face Enhancement (GFPGAN) - Optional face quality improvement
 ```
 
 ## 🚀 Quick Start
@@ -113,19 +139,33 @@ python test_installation.py
 # Activate environment
 source venv/bin/activate
 
-# Start the FastAPI server
+# Start the FastAPI server (defaults to port 5001)
 cd backend
 python app.py
+
+# Or specify a custom port
+python app.py --port 9000
 ```
 
-2. **Open the web interface:**
+2. **Access the web interface:**
+```
+🌐 Open your browser and navigate to: http://localhost:5001/ui
+```
+
+The web interface includes four main tabs:
+- **📝 Text to Video**: Generate videos from text input with optional custom portraits
+- **🎤 Audio to Video**: Process uploaded audio files with ASR and translation  
+- **🖼️ Custom Image Video**: Use custom portraits with text input and voice cloning
+- **🎬 Image + Audio Direct**: Direct video generation from image and audio files
+
+3. **Alternative: Direct file access:**
 ```bash
-# Open the web interface in your browser
+# If you prefer to open the HTML file directly
 open web_interface.html
-# Or manually navigate to the file in your browser
+# Note: You'll need to update the API_BASE URL in the HTML if using different ports
 ```
 
-3. **Alternative: Use Docker (if available):**
+4. **Docker deployment (optional):**
 ```bash
 # Build and run with Docker
 docker-compose up --build
@@ -135,65 +175,161 @@ docker-compose up --build
 
 ### 1. Text-to-Video Generation
 
+Generate talking avatar videos from text input with optional custom portraits and voice cloning.
+
 **Via Web Interface:**
-1. Open `web_interface.html` in your browser
-2. Go to "Text to Video" tab
-3. Enter your lecture content
-4. Select or upload a lecturer portrait
-5. Choose voice settings (speed, lecturer name)
-6. Click "Generate Video"
-7. Download the generated video when ready
+1. Open `http://localhost:5001/ui` in your browser
+2. Go to "📝 Text to Video" tab
+3. Enter your lecture content in the text area
+4. Select language (auto-detect available)
+5. Choose lecturer name or use default
+6. (Optional) Upload custom portrait image
+7. (Optional) Upload voice reference for cloning
+8. Adjust speech speed (0.5x - 2.0x)
+9. Click "🎬 Generate Video"
+10. Monitor progress and download when ready
 
 **Via API:**
 ```bash
-curl -X POST "http://localhost:8000/generate-video" \
+curl -X POST "http://localhost:5001/generate/text" \
   -H "Content-Type: application/json" \
   -d '{
-    "text": "Hello, I am your AI lecturer. Today we will discuss...",
-    "lecturer_name": "sample_lecturer",
+    "text": "Welcome students! Today we will explore artificial intelligence...",
+    "lecturer_name": "prof_ai",
+    "language": "en",
     "speed": 1.0
   }'
 ```
 
 ### 2. Audio-to-Video Generation
 
+Process uploaded audio files with automatic speech recognition and translation support.
+
 **Via Web Interface:**
-1. Go to "Audio to Video" tab
-2. Upload your audio file (.wav, .mp3)
-3. Upload or select a portrait image
-4. Click "Generate Video"
+1. Go to "🎤 Audio to Video" tab
+2. Upload your audio file (.wav, .mp3, .m4a, .flac)
+3. Select source language (auto-detect available)
+4. Choose target language for translation
+5. Set lecturer name and speech speed
+6. (Optional) Upload custom portrait image
+7. (Optional) Upload voice reference for cloning
+8. Click "🎬 Generate Video"
 
 **Via API:**
 ```bash
-curl -X POST "http://localhost:8000/generate-video-from-audio" \
+curl -X POST "http://localhost:5001/generate/audio" \
+  -F "audio_file=@/path/to/lecture.wav" \
+  -F "language=auto" \
+  -F "translate_to=en" \
+  -F "lecturer_name=prof_audio"
+```
+
+### 3. Custom Image Video Generation
+
+Create personalized avatar videos using your own portrait images.
+
+**Via Web Interface:**
+1. Go to "🖼️ Custom Image Video" tab
+2. Enter the text content
+3. Upload portrait image (JPG, PNG - front-facing recommended)
+4. Select source and target languages
+5. (Optional) Upload voice reference for better cloning
+6. Adjust speech speed
+7. Click "🎬 Generate Custom Video"
+
+**Via API:**
+```bash
+curl -X POST "http://localhost:5001/generate/video-with-image" \
+  -F "text=Your lecture content here" \
+  -F "image_file=@/path/to/portrait.jpg" \
+  -F "language=en" \
+  -F "translate_to=hi"
+```
+
+### 4. Image + Audio Direct Generation (NEW!)
+
+Create talking avatar videos directly from image and audio files without any text-to-speech processing.
+
+**Via Web Interface:**
+1. Go to "🎬 Image + Audio Direct" tab
+2. Upload portrait image (JPG, PNG)
+3. Upload audio file (.wav, .mp3, .m4a, .flac)
+4. Set output name/prefix
+5. Enable/disable face enhancement
+6. Enable/disable still mode (lip movements only)
+7. Click "🎬 Generate Direct Video"
+
+**Via API:**
+```bash
+curl -X POST "http://localhost:5001/generate/image-with-audio" \
+  -F "image_file=@/path/to/portrait.jpg" \
   -F "audio_file=@/path/to/audio.wav" \
-  -F "portrait_file=@/path/to/portrait.png"
+  -F "lecturer_name=direct_avatar" \
+  -F "enhance_face=true" \
+  -F "still_mode=true"
+```
+
+### 5. Task Status Monitoring
+
+**Via Web Interface:**
+- Real-time progress updates appear automatically
+- Download links provided when generation completes
+- Error messages displayed if processing fails
+
+**Via API:**
+```bash
+# Check status using task ID returned from generation endpoints
+curl "http://localhost:5001/status/{task_id}"
+
+# Response example
+{
+  "task_id": "text_20250525_123456_789012",
+  "status": "completed",
+  "progress": 100,
+  "message": "Video generation completed successfully",
+  "result_url": "/download/text_20250525_123456_789012/final_video.mp4"
+}
 ```
 
 ### 3. Custom Lecturer Profiles
 
-Create custom lecturer profiles by organizing files in the `portraits/` directory:
+Create and manage custom lecturer profiles by organizing files in the `portraits/` directory:
 
 ```
 portraits/
 ├── prof_smith/
-│   ├── portrait.png      # Lecturer's photo
-│   └── voice_ref.wav     # Voice reference for cloning
-└── prof_jones/
+│   ├── portrait.png          # High-quality front-facing photo
+│   └── voice_reference.wav   # 5-10 second voice sample
+├── prof_jones/
+│   ├── portrait.jpg          # JPG format also supported
+│   └── voice_sample.mp3      # Various audio formats supported
+└── sample_lecturer/          # Default lecturer included
     ├── portrait.png
-    └── voice_ref.wav
+    └── voice.wav
 ```
+
+**Profile Guidelines:**
+- **Portrait Images**: Use high-resolution, front-facing photos with clear facial features
+- **Voice References**: 5-10 second clear speech samples work best for voice cloning
+- **Naming**: Use descriptive folder names (prof_lastname, dr_firstname, etc.)
+- **Formats**: PNG/JPG for images, WAV/MP3/M4A for audio
+
+**Using Custom Profiles:**
+1. Create folder in `portraits/` directory
+2. Add `portrait.png` and `voice_reference.wav` files
+3. Reference the folder name in API calls or web interface
+4. The system will automatically use custom files when available
 
 ## 🔧 Configuration
 
 ### Environment Variables
 
-Create a `.env` file in the root directory:
+Create a `.env` file in the root directory for custom configuration:
 
 ```env
-# API Configuration
+# API Configuration  
 API_HOST=0.0.0.0
-API_PORT=8000
+API_PORT=5001
 
 # Model Paths
 SADTALKER_CHECKPOINT_PATH=./SadTalker/checkpoints
@@ -202,130 +338,341 @@ SADTALKER_CONFIG_PATH=./SadTalker/src/config
 # Output Settings
 OUTPUT_DIR=./outputs
 UPLOAD_DIR=./uploads
+DEBUG_DIR=./debug_test
 
 # Processing Settings
 DEFAULT_BATCH_SIZE=1
 DEFAULT_VIDEO_SIZE=256
-ENABLE_FACE_ENHANCER=false
+ENABLE_FACE_ENHANCER=true
+DEFAULT_STILL_MODE=true
+
+# TTS Settings
+DEFAULT_TTS_SPEED=1.0
+VOICE_CLONE_ENABLED=true
+
+# ASR Settings
+WHISPER_MODEL_SIZE=base
+ASR_LANGUAGE_AUTO_DETECT=true
 ```
 
 ### SadTalker Parameters
 
 Fine-tune video generation by modifying parameters in `video/synthesize_video.py`:
 
-- **`size`**: Output resolution (256 or 512)
-- **`use_enhancer`**: Enable GFPGAN face enhancement
-- **`still`**: Reduce head movement for more static appearance
+- **`size`**: Output resolution (256 or 512) - 256 recommended for speed
+- **`enhancer`**: Enable GFPGAN face enhancement (true/false)
+- **`still`**: Reduce head movement for static appearance (true/false) 
 - **`preprocess`**: Processing mode ('crop', 'resize', 'full')
-- **`batch_size`**: Number of frames processed together
-- **`exp_scale`**: Expression intensity (0.5-2.0)
+- **`batch_size`**: Frames processed together (1-4, higher needs more memory)
+- **`exp_scale`**: Expression intensity (0.5-2.0, 1.0 default)
+- **`pose_style`**: Head pose variation (0-46, 0 for minimal movement)
+
+### Web Interface Configuration
+
+Update API endpoint in `web_interface.html` if using different port:
+
+```javascript
+// Line ~563 in web_interface.html
+const API_BASE = 'http://localhost:5001';  // Change port if needed
+```
+
+### Performance Tuning
+
+**For faster processing:**
+```python
+# In video/synthesize_video.py
+"size": 256,           # Use smaller resolution
+"still": True,         # Disable head movement  
+"enhancer": False,     # Disable face enhancement
+"batch_size": 2,       # Increase if you have enough memory
+```
+
+**For higher quality:**
+```python
+# In video/synthesize_video.py  
+"size": 512,           # Use higher resolution
+"still": False,        # Enable natural head movement
+"enhancer": True,      # Enable GFPGAN face enhancement
+"exp_scale": 1.2,      # Increase expression intensity
+```
 
 ## 📁 Project Structure
 
 ```
-ai-avatar-lecture/
-├── README.md                 # This file
-├── requirements.txt          # Python dependencies
-├── docker-compose.yml        # Docker configuration
-├── web_interface.html        # Web UI
-├── test_installation.py      # Installation test script
+doctor-avatar/
+├── README.md                    # This comprehensive guide
+├── requirements.txt             # Python dependencies  
+├── docker-compose.yml           # Docker configuration
+├── web_interface.html           # Modern web UI (accessible at /ui)
+├── start.sh                     # Quick start script
 │
-├── backend/                  # FastAPI backend
-│   ├── app.py               # Main application
+├── backend/                     # FastAPI backend server
+│   ├── app.py                  # Main application with all endpoints
 │   └── __init__.py
 │
-├── asr/                     # Speech Recognition
-│   ├── asr.py               # ASR processor
+├── asr/                        # Automatic Speech Recognition
+│   ├── asr.py                  # OpenAI Whisper integration
 │   └── __init__.py
 │
-├── translate/               # Translation module
-│   ├── translate.py         # Language translation
+├── translate/                  # Multi-language translation
+│   ├── translate.py            # Translation service
 │   └── __init__.py
 │
-├── clone/                   # Voice cloning
-│   ├── clone.py             # Voice cloning logic
+├── clone/                      # Voice cloning system
+│   ├── clone.py                # Coqui TTS voice cloning
 │   └── __init__.py
 │
-├── tts/                     # Text-to-Speech
-│   ├── tts.py               # TTS generator
+├── tts/                        # Text-to-Speech engines
+│   ├── enhanced_tts.py         # Multi-engine TTS (Coqui, GTTS)
+│   ├── tts.py                  # Basic TTS functionality
 │   └── __init__.py
 │
-├── video/                   # Video synthesis
-│   ├── synthesize_video.py  # SadTalker wrapper
-│   ├── simple_video_fallback.py
+├── video/                      # Video synthesis pipeline
+│   ├── synthesize_video.py     # SadTalker integration wrapper
+│   ├── simple_video_fallback.py # Fallback video generator
 │   └── __init__.py
 │
-├── SadTalker/               # SadTalker integration
-│   ├── inference.py         # Main SadTalker script
-│   ├── checkpoints/         # Model files (~1.8GB)
-│   ├── src/                 # Source code
-│   └── gfpgan/              # Face enhancement
+├── SadTalker/                  # Core lip-sync technology
+│   ├── inference.py            # Main SadTalker script
+│   ├── checkpoints/            # Model files (~1.8GB)
+│   │   ├── mapping_00109-model.pth.tar
+│   │   ├── mapping_00229-model.pth.tar 
+│   │   ├── SadTalker_V0.0.2_256.safetensors
+│   │   └── SadTalker_V0.0.2_512.safetensors
+│   ├── src/                    # SadTalker source code
+│   │   ├── face3d/            # 3D face modeling
+│   │   ├── audio2pose/        # Audio-driven pose generation
+│   │   ├── audio2exp/         # Audio-driven expression
+│   │   └── config/            # Configuration files
+│   └── gfpgan/                # Face enhancement models
+│       └── weights/           # GFPGAN model weights
 │
-├── portraits/               # Lecturer profiles
-│   ├── sample_lecturer.png
-│   ├── sample_lecturer_voice.wav
-│   └── sample_lecturer/
+├── portraits/                  # Lecturer profiles & assets
+│   ├── sample_lecturer.png     # Default lecturer portrait
+│   ├── sample_lecturer_voice.wav # Default voice reference
+│   ├── Ankit Chauhan.png       # Custom lecturer example
+│   ├── Ankit Chauhan_voice.mp3 # Custom voice example
+│   └── sample_lecturer/        # Organized profile folder
+│       ├── portrait.png
+│       └── voice.wav
 │
-├── outputs/                 # Generated videos
-├── uploads/                 # Temporary uploads
-└── tests/                   # Test cases
+├── outputs/                    # Generated videos & audio
+│   ├── text_YYYYMMDD_HHMMSS_*/     # Text-to-video outputs
+│   ├── audio_YYYYMMDD_HHMMSS_*/    # Audio-to-video outputs  
+│   ├── image_audio_YYYYMMDD_*/     # Image+audio direct outputs
+│   └── language_tests/             # Multi-language test outputs
+│
+├── uploads/                    # Temporary file uploads
+├── debug_test/                 # Debug outputs and logs
+├── logs/                       # Application logs
+│
+└── tests/                      # Test suite
+    ├── manual/                 # Manual test scripts
+    │   ├── test_complete_workflow.py
+    │   ├── test_lip_sync.py
+    │   ├── test_gujarati_components.py
+    │   └── test_*.py           # Various feature tests
+    ├── integration/            # Integration tests
+    ├── unit/                   # Unit tests
+    └── conftest.py            # Test configuration
 ```
+
+### Key Directories Explained
+
+- **`backend/`**: FastAPI server with all API endpoints and business logic
+- **`SadTalker/`**: Core technology for lip-sync video generation
+- **`portraits/`**: Lecturer profiles with images and voice references  
+- **`outputs/`**: Generated videos organized by timestamp and type
+- **`tests/manual/`**: Comprehensive test scripts for all features
+- **`web_interface.html`**: Modern responsive UI with 4 generation modes
 
 ## 🎯 API Reference
 
 ### Core Endpoints
 
-#### POST `/generate-video`
-Generate video from text input.
+All endpoints are available at `http://localhost:5001` when the backend server is running.
 
-**Request Body:**
-```json
-{
-  "text": "Your lecture content here",
-  "lecturer_name": "sample_lecturer",
-  "speed": 1.0,
-  "language": "en"
-}
+#### GET `/ui`
+Serve the web interface.
+```bash
+# Access the web UI
+curl http://localhost:5001/ui
+# Or open in browser: http://localhost:5001/ui
+```
+
+#### GET `/health`
+Check system health and component status.
+```bash
+curl http://localhost:5001/health
 ```
 
 **Response:**
 ```json
 {
-  "task_id": "unique-task-id",
-  "status": "processing",
-  "message": "Video generation started"
+  "status": "healthy",
+  "timestamp": "2025-05-25T15:00:00",
+  "components": {
+    "asr": true,
+    "translator": false,
+    "voice_cloner": true,
+    "tts_generator": true,
+    "video_synthesizer": true
+  }
 }
 ```
 
-#### POST `/generate-video-from-audio`
-Generate video from audio file.
+#### POST `/generate/text`
+Generate video from text input with optional custom portrait and voice.
 
 **Request:** Multipart form data
-- `audio_file`: Audio file (.wav, .mp3)
-- `portrait_file`: Portrait image (.png, .jpg)
-
-#### GET `/task-status/{task_id}`
-Check generation status.
+- `text`: Text content to synthesize (required)
+- `language`: Language code (auto, en, hi, gu, etc.)
+- `lecturer_name`: Profile name (default: sample_lecturer)
+- `speed`: Speech speed (0.5-2.0, default: 1.0)
+- `portrait_file`: Custom portrait image (optional)
+- `voice_file`: Voice reference for cloning (optional)
 
 **Response:**
 ```json
 {
-  "task_id": "unique-task-id",
-  "status": "completed",
-  "video_url": "/download/video/filename.mp4",
-  "duration": 120.5
+  "task_id": "text_20250525_123456_789012",
+  "status": "processing",
+  "message": "Text video generation started"
 }
 ```
 
-#### GET `/download/video/{filename}`
-Download generated video file.
+#### POST `/generate/audio`
+Generate video from uploaded audio file with ASR and translation.
 
-### Status Codes
+**Request:** Multipart form data
+- `audio_file`: Audio file (.wav, .mp3, .m4a, .flac) (required)
+- `language`: Source language (auto-detect default)
+- `translate_to`: Target language for translation
+- `lecturer_name`: Profile name
+- `speed`: Playback speed adjustment
+- `portrait_file`: Custom portrait (optional)
+- `voice_clone_file`: Voice reference (optional)
 
+#### POST `/generate/video-with-image`
+Generate video using custom image with text input.
+
+**Request:** Multipart form data
+- `text`: Text content (required)
+- `image_file`: Portrait image (required)
+- `language`: Source language
+- `translate_to`: Target language
+- `speed`: Speech speed
+- `voice_file`: Voice reference (optional)
+
+#### POST `/generate/image-with-audio` ⭐ NEW!
+Direct video generation from image and audio files without TTS processing.
+
+**Request:** Multipart form data
+- `image_file`: Portrait image (.jpg, .png) (required)
+- `audio_file`: Audio file (.wav, .mp3, .m4a, .flac) (required)
+- `lecturer_name`: Output name prefix (default: custom_image_audio)
+- `enhance_face`: Enable face enhancement (boolean, default: true)
+- `still_mode`: Enable still mode - lip sync only (boolean, default: true)
+
+**Example:**
+```bash
+curl -X POST "http://localhost:5001/generate/image-with-audio" \
+  -F "image_file=@portrait.jpg" \
+  -F "audio_file=@lecture.wav" \
+  -F "lecturer_name=my_avatar" \
+  -F "enhance_face=true" \
+  -F "still_mode=false"
+```
+
+#### GET `/status/{task_id}`
+Check generation status and progress.
+
+**Response:**
+```json
+{
+  "task_id": "text_20250525_123456_789012",
+  "status": "completed",
+  "progress": 100,
+  "message": "Video generation completed successfully",
+  "result_url": "/download/text_20250525_123456_789012/final_video.mp4",
+  "duration": 245.7,
+  "file_size": "15.2 MB"
+}
+```
+
+#### GET `/download/{path:path}`
+Download generated video files.
+
+```bash
+# Download the generated video
+curl -O "http://localhost:5001/download/text_20250525_123456_789012/final_video.mp4"
+```
+
+#### GET `/languages`
+Get list of supported languages.
+
+**Response:**
+```json
+{
+  "supported_languages": {
+    "en": "English",
+    "hi": "Hindi", 
+    "gu": "Gujarati",
+    "ta": "Tamil",
+    "te": "Telugu",
+    "mr": "Marathi",
+    "bn": "Bengali",
+    "kn": "Kannada",
+    "ml": "Malayalam",
+    "pa": "Punjabi",
+    "ur": "Urdu"
+  }
+}
+```
+
+### Status Codes & Task States
+
+**Task Status Values:**
 - `processing`: Video generation in progress
 - `completed`: Video ready for download
-- `failed`: Generation failed (check logs)
+- `failed`: Generation failed (check error message)
 - `not_found`: Task ID not found
+
+**HTTP Status Codes:**
+- `200`: Success
+- `202`: Accepted (async task started)
+- `400`: Bad request (invalid parameters)
+- `404`: Resource not found
+- `500`: Internal server error
+
+### Background Task Processing
+
+All video generation endpoints return immediately with a task ID. Use the `/status/{task_id}` endpoint to monitor progress:
+
+```python
+import time
+import requests
+
+# Start generation
+response = requests.post("http://localhost:5001/generate/text", 
+                        data={"text": "Hello world", "lecturer_name": "prof"})
+task_id = response.json()["task_id"]
+
+# Poll for completion
+while True:
+    status = requests.get(f"http://localhost:5001/status/{task_id}").json()
+    print(f"Progress: {status['progress']}% - {status['message']}")
+    
+    if status["status"] == "completed":
+        video_url = f"http://localhost:5001{status['result_url']}"
+        print(f"Video ready: {video_url}")
+        break
+    elif status["status"] == "failed":
+        print(f"Generation failed: {status.get('error', 'Unknown error')}")
+        break
+        
+    time.sleep(2)
+```
 
 ## 🔍 Troubleshooting
 

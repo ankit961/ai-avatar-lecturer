@@ -43,13 +43,8 @@ class Translator:
             "hi_to_en": "Helsinki-NLP/opus-mt-hi-en",
             "en_to_hi": "Helsinki-NLP/opus-mt-en-hi",
             
-            # Tamil
-            "ta_to_en": "Helsinki-NLP/opus-mt-ta-en",
-            "en_to_ta": "Helsinki-NLP/opus-mt-en-ta",
-            
-            # Telugu
-            "te_to_en": "Helsinki-NLP/opus-mt-te-en",
-            "en_to_te": "Helsinki-NLP/opus-mt-en-te",
+            # Note: Tamil and Telugu models don't exist in Helsinki-NLP
+            # These languages will use the multilingual fallback models (en_to_indic, indic_to_en)
             
             # Marathi
             "mr_to_en": "Helsinki-NLP/opus-mt-mr-en",
@@ -59,23 +54,10 @@ class Translator:
             "bn_to_en": "Helsinki-NLP/opus-mt-bn-en",
             "en_to_bn": "Helsinki-NLP/opus-mt-en-bn",
             
-            # Gujarati (using Indic language models as fallback)
-            "gu_to_en": "Helsinki-NLP/opus-mt-inc-en",
-            "en_to_gu": "Helsinki-NLP/opus-mt-en-inc",
+            # Note: Individual language models for gu, kn, ml, pa, ur don't exist
+            # These languages will use the multilingual fallback models (en_to_indic, indic_to_en)
             
-            # Kannada
-            "kn_to_en": "Helsinki-NLP/opus-mt-kn-en",
-            "en_to_kn": "Helsinki-NLP/opus-mt-en-kn",
-            
-            # Malayalam
-            "ml_to_en": "Helsinki-NLP/opus-mt-ml-en",
-            "en_to_ml": "Helsinki-NLP/opus-mt-en-ml",
-            
-            # Punjabi
-            "pa_to_en": "Helsinki-NLP/opus-mt-pa-en",
-            "en_to_pa": "Helsinki-NLP/opus-mt-en-pa",
-            
-            # Urdu
+            # Urdu (has working models)
             "ur_to_en": "Helsinki-NLP/opus-mt-ur-en",
             "en_to_ur": "Helsinki-NLP/opus-mt-en-ur",
             
@@ -156,14 +138,24 @@ class Translator:
                 "target_lang": target_lang
             }
         
-        # Determine model key
+        # Determine model key with fallback support
         if source_lang == "auto":
             model_key = "auto_to_en" if target_lang == "en" else "hi_to_en"
         else:
             model_key = f"{source_lang}_to_{target_lang}"
         
+        # Try fallback for unsupported pairs
         if model_key not in self.model_configs:
-            raise ValueError(f"Translation from {source_lang} to {target_lang} not supported")
+            # For English to Indic languages, try the multilingual Indic model
+            if source_lang == "en" and target_lang in ["ta", "te", "gu", "kn", "ml", "pa"]:
+                model_key = "en_to_indic"
+                logger.warning(f"Using fallback model en_to_indic for {source_lang}->{target_lang}")
+            # For Indic to English, try the multilingual Indic model
+            elif source_lang in ["ta", "te", "gu", "kn", "ml", "pa"] and target_lang == "en":
+                model_key = "indic_to_en"
+                logger.warning(f"Using fallback model indic_to_en for {source_lang}->{target_lang}")
+            else:
+                raise ValueError(f"Translation from {source_lang} to {target_lang} not supported. Available models: {list(self.model_configs.keys())}")
         
         # Load model if needed
         self._load_model(model_key)

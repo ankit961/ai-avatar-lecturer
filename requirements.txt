@@ -6,7 +6,7 @@ torchaudio>=2.0.0
 # AI/ML Libraries
 openai-whisper>=20231117
 transformers[sentencepiece]>=4.35.0
-coqui-tts>=0.17.0
+coqui-tts==0.25.3
 scipy>=1.11.0
 numpy>=1.24.0
 librosa>=0.10.0
